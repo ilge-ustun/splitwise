@@ -50,7 +50,6 @@ export default function StepDeploy({ name, members, pdMembersAddress, onSuccess,
               if ((decoded as { eventName?: string }).eventName === "GroupCreated") {
                 const args = (decoded as unknown as { args?: Record<string, unknown> }).args;
                 const groupValue = args?.group;
-                console.log("groupValue", groupValue);
                 if (typeof groupValue === "string") newGroup = getAddress(groupValue) as `0x${string}`;
                 break;
               }
