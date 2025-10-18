@@ -11,7 +11,7 @@ if (!projectId) {
   throw new Error('You need to provide NEXT_PUBLIC_REOWN_PROJECT_ID env variable');
 }
 
-const networks = Object.values(wagmiNetworks) as [
+const networks = Object.values(wagmiNetworks) as unknown as [
   AppKitNetwork,
   ...AppKitNetwork[],
 ];
