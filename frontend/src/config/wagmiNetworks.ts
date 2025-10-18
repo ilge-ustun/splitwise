@@ -1,8 +1,9 @@
 import {
   arbitrumSepolia,
+  gnosis,
 } from '@reown/appkit/networks';
 
-export { arbitrumSepolia } from '@reown/appkit/networks';
+export { arbitrumSepolia, gnosis } from '@reown/appkit/networks';
 
 // export const bellecour: AppKitNetwork = {
 //   id: 0x86,
@@ -30,10 +31,12 @@ export const explorerSlugs: Record<number, string> = {
   134: 'bellecour', // iExec Sidechain (Bellecour)
   42161: 'arbitrum-mainnet', // Arbitrum One
   421614: 'arbitrum-sepolia-testnet', // Arbitrum Sepolia
+  100: 'gnosis-chain', // Gnosis
 };
 
 const wagmiNetworks = {
   arbitrumSepolia,
+  gnosis,
 };
 
 export default wagmiNetworks;
