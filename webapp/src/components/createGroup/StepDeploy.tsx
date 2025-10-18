@@ -21,6 +21,7 @@ export default function StepDeploy({ name, members, pdMembersAddress, onSuccess,
 
   const [localError, setLocalError] = useState<string | null>(null);
   const [handledTx, setHandledTx] = useState<`0x${string}` | null>(null);
+  const [createdGroup, setCreatedGroup] = useState<{ address: `0x${string}`; txHash: `0x${string}` } | null>(null);
 
   const canSubmit = useMemo(
     () => isConnected && name.trim().length > 0 && members.length > 0 && Boolean(pdMembersAddress),
@@ -49,6 +50,7 @@ export default function StepDeploy({ name, members, pdMembersAddress, onSuccess,
               if ((decoded as { eventName?: string }).eventName === "GroupCreated") {
                 const args = (decoded as unknown as { args?: Record<string, unknown> }).args;
                 const groupValue = args?.group;
+                console.log("groupValue", groupValue);
                 if (typeof groupValue === "string") newGroup = getAddress(groupValue) as `0x${string}`;
                 break;
               }
@@ -57,6 +59,7 @@ export default function StepDeploy({ name, members, pdMembersAddress, onSuccess,
         }
         if (!newGroup) throw new Error("Unable to detect new group address from receipt");
         setHandledTx(txHash as `0x${string}`);
+        setCreatedGroup({ address: newGroup, txHash: txHash as `0x${string}` });
         onSuccess({
           groupAddress: newGroup,
           name,
@@ -125,6 +128,40 @@ export default function StepDeploy({ name, members, pdMembersAddress, onSuccess,
       <div>
         <button type="button" onClick={onSubmit} disabled={!canSubmit || isPending} className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white disabled:opacity-50">Create group</button>
       </div>
+
+      {createdGroup && (
+        <div className="bg-blue-100 border border-blue-300 rounded-xl p-4 text-blue-900">
+          <h4 className="text-base font-semibold mb-2">Group created</h4>
+          <div className="space-y-1 text-sm">
+            <p>
+              <strong>Address:</strong> {createdGroup.address}
+              {(
+                <a
+                  href={`https://sepolia.etherscan.io/address/${createdGroup.address}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="ml-2 underline"
+                >
+                  View
+                </a>
+              )}
+            </p>
+            <p>
+              <strong>Tx:</strong> {createdGroup.txHash}
+              {(
+                <a
+                  href={`https://sepolia.etherscan.io/tx/${createdGroup.txHash}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="ml-2 underline"
+                >
+                  View
+                </a>
+              )}
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
