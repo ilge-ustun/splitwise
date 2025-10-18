@@ -48,7 +48,7 @@ export default function StepProtect({ name, members, onSuccess, onError, initial
 
   return (
     <div className="space-y-3">
-      <h3 className="text-lg font-semibold">Step 2 — Protect members</h3>
+      <h3 className="text-lg font-semibold">Step 1 — Protect members</h3>
       {chainId !== 421614 && (
         <div className="rounded-lg border border-yellow-300/30 bg-yellow-300/10 p-3 text-sm">
           <p className="mb-2">Current chain: {chainId}. Switch to Arbitrum Sepolia (421614) to protect.</p>

@@ -113,6 +113,7 @@ export default function StepDeploy({ name, members, pdMembersAddress, onSuccess,
 
   return (
     <div className="space-y-3">
+      <h3 className="text-lg font-semibold">Step 2 — Create group</h3>
       {chainId !== 11155111 && (
         <div className="rounded-lg border border-yellow-300/30 bg-yellow-300/10 p-3 text-sm">
           <p className="mb-2">Current chain: {chainId}. Switch to Sepolia (11155111) to create.</p>

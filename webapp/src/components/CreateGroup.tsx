@@ -105,40 +105,6 @@ export default function CreateGroup() {
         onSuccess={({ groupAddress, txHash }) => setDeployed({ address: groupAddress, txHash })}
         onError={() => {}}
       />
-
-      {deployed && (
-        <div className="bg-blue-100 border border-blue-300 rounded-xl p-4 text-blue-900">
-          <h4 className="text-base font-semibold mb-2">Group deployed</h4>
-          <div className="space-y-1 text-sm">
-            <p>
-              <strong>Address:</strong> {deployed.address}
-              {(
-                <a
-                  href={`https://sepolia.etherscan.io/address/${deployed.address}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="ml-2 underline"
-                >
-                  View
-                </a>
-              )}
-            </p>
-            <p>
-              <strong>Tx:</strong> {deployed.txHash}
-              {(
-                <a
-                  href={`https://sepolia.etherscan.io/tx/${deployed.txHash}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="ml-2 underline"
-                >
-                  View
-                </a>
-              )}
-            </p>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
