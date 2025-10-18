@@ -14,7 +14,6 @@ export default function CreateGroup() {
   const [members, setMembers] = useState<string[]>([]);
   const [localError, setLocalError] = useState<string | null>(null);
   const [pdMembers, setPdMembers] = useState<ProtectedData | null>(null);
-  const [deployed, setDeployed] = useState<{ address: `0x${string}`; txHash: `0x${string}` } | null>(null);
 
   useEffect(() => {
     if (connectedAddress) {
@@ -102,7 +101,7 @@ export default function CreateGroup() {
         name={name}
         members={members}
         pdMembersAddress={pdMembers?.address as `0x${string}` | undefined}
-        onSuccess={({ groupAddress, txHash }) => setDeployed({ address: groupAddress, txHash })}
+        onSuccess={() => {}}
         onError={() => {}}
       />
     </div>
