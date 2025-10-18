@@ -6,8 +6,8 @@ import { useAccount, useChainId, useSwitchChain, useWaitForTransactionReceipt, u
 import GroupDataAbi from "@/abi/GroupData.json";
 import SplitwiseBaseAbi from "@/abi/SplitwiseBase.json";
 import { smartcontracts } from "@/const/smartcontracts";
-import { IExecDataProtector, IExecDataProtectorCore, ProtectedData } from "@iexec/dataprotector";
-import { explorerSlugs } from "@/config/wagmiNetworks";
+import { ProtectedData } from "@iexec/dataprotector";
+import { useIExecDataProtector } from "@/hooks/useIExecDataProtector";
 
 export default function CreateGroup() {
   const { address: connectedAddress, isConnected, connector } = useAccount();
@@ -18,7 +18,7 @@ export default function CreateGroup() {
   const [newParticipant, setNewParticipant] = useState("");
   const [participants, setParticipants] = useState<string[]>([]);
   const [localError, setLocalError] = useState<string | null>(null);
-  const [dataProtectorCore, setDataProtectorCore] = useState<IExecDataProtectorCore | null>(null);
+  const { isReady: isIExecReady, protectParticipants, getExplorerUrl } = useIExecDataProtector();
 
   // Ensure the connected wallet is always included
   useEffect(() => {
@@ -67,32 +67,7 @@ export default function CreateGroup() {
   const [protectedDataInfo, setProtectedDataInfo] = useState<ProtectedData | null>(null);
   const [postError, setPostError] = useState<string | null>(null);
 
-  // Get explorer URL for current chain using iExec explorer
-  const getExplorerUrl = (
-    address?: string,
-    type: "address" | "dataset" | "apps" = "address",
-  ) => {
-    const explorerSlug = explorerSlugs[chainId];
-    if (!explorerSlug) return null;
-    if (!address) return `https://explorer.iex.ec/${explorerSlug}/${type}`;
-    return `https://explorer.iex.ec/${explorerSlug}/${type}/${address}`;
-  };
-
-  // Initialize iExec DataProtector core like in page.tsx
-  useEffect(() => {
-    const initializeDataProtector = async () => {
-      if (isConnected && connector) {
-        try {
-          const provider = (await connector.getProvider()) as import("ethers").Eip1193Provider;
-          const dataProtector = new IExecDataProtector(provider, { allowExperimentalNetworks: true });
-          setDataProtectorCore(dataProtector.core);
-        } catch (error) {
-          console.error("Failed to initialize data protector:", error);
-        }
-      }
-    };
-    void initializeDataProtector();
-  }, [isConnected, connector]);
+  // iExec ready state is provided by the hook
 
   // After tx success: decode group address, protect participants via iExec, then pushData
   useEffect(() => {
@@ -140,15 +115,11 @@ export default function CreateGroup() {
         // 2) Protect participants array with iExec DataProtector
         setPostStep("protecting");
         console.log("protecting");
-        if (!dataProtectorCore) throw new Error("iExec DataProtector not initialized");
-        const participantsObject = participants.reduce<Record<string, string>>((acc, addr, idx) => {
-          acc[String(idx)] = addr;
-          return acc;
-        }, {});
-        const protectedRes: ProtectedData = await dataProtectorCore.protectData({
-          name: `Splitwise Group Participants - ${name}`,
-          data: { participants: participantsObject },
-        });
+        if (!isIExecReady) throw new Error("iExec DataProtector not initialized");
+        const protectedRes: ProtectedData = await protectParticipants(
+          `Splitwise Group Participants - ${name}`,
+          participants,
+        );
         setProtectedDataInfo(protectedRes);
         console.log("protectedRes", protectedRes);
 
@@ -171,7 +142,7 @@ export default function CreateGroup() {
       }
     };
     void runPostFlow();
-  }, [isSuccess, txHash, postStep, name, participants, writeContractAsync, dataProtectorCore, connector]);
+  }, [isSuccess, txHash, postStep, name, participants, writeContractAsync, isIExecReady, protectParticipants, connector]);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
