@@ -2,16 +2,25 @@
 
 import StepDeploy from "./createGroup/StepDeploy";
 import StepProtect from "./createGroup/StepProtect";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useAccount } from "wagmi";
 import { getAddress, isAddress } from "viem";
 import type { ProtectedData } from "@iexec/dataprotector";
 
 export default function CreateGroup() {
+  const { address: connectedAddress } = useAccount();
   const [name, setName] = useState("");
   const [newMember, setNewMember] = useState("");
   const [members, setMembers] = useState<string[]>([]);
   const [localError, setLocalError] = useState<string | null>(null);
   const [pdMembers, setPdMembers] = useState<ProtectedData | null>(null);
+
+  useEffect(() => {
+    if (connectedAddress) {
+      const normalized = getAddress(connectedAddress);
+      setMembers(prev => (prev.includes(normalized) ? prev : [normalized, ...prev]));
+    }
+  }, [connectedAddress]);
 
   function addParticipant() {
     setLocalError(null);
@@ -27,6 +36,8 @@ export default function CreateGroup() {
   }
 
   function removeParticipant(p: string) {
+    const current = connectedAddress ? getAddress(connectedAddress) : null;
+    if (current && p === current) return;
     setMembers(prev => prev.filter(x => x !== p));
   }
 
@@ -64,12 +75,15 @@ export default function CreateGroup() {
               <p className="text-sm text-white/60">No participants yet.</p>
             ) : (
               <ul className="space-y-2">
-                {members.map(p => (
-                  <li key={p} className="flex items-center justify-between rounded-lg border border-white/10 bg-white/5 px-3 py-2">
-                    <span className="font-mono text-sm break-all">{p}</span>
-                    <button type="button" onClick={() => removeParticipant(p)} className="text-red-400 hover:text-red-300 text-sm">Remove</button>
-                  </li>
-                ))}
+                {members.map(p => {
+                  const isSelf = connectedAddress ? getAddress(connectedAddress) === p : false;
+                  return (
+                    <li key={p} className="flex items-center justify-between rounded-lg border border-white/10 bg-white/5 px-3 py-2">
+                      <span className="font-mono text-sm break-all">{p}{isSelf ? " (you)" : ""}</span>
+                      <button type="button" onClick={() => removeParticipant(p)} disabled={isSelf} className="text-red-400 hover:text-red-300 text-sm disabled:opacity-50">Remove</button>
+                    </li>
+                  );
+                })}
               </ul>
             )}
           </div>
