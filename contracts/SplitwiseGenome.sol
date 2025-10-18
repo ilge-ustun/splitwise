@@ -4,7 +4,7 @@ pragma solidity ^0.8.24;
 import "@openzeppelin/contracts/proxy/Clones.sol";
 
 interface IGroup {
-    function initialize(string memory _name) external;
+    function initialize(string memory _name, address _pd_members) external;
 }
 
 contract SplitwiseGenome {
@@ -30,7 +30,8 @@ contract SplitwiseGenome {
      */
     function createGroup(
         address[] calldata _users,
-        string calldata _name
+        string calldata _name,
+        address _pd_members
     ) public returns (address newSC) {
         require(_users.length > 0, "NO_USERS");
 
@@ -38,7 +39,7 @@ contract SplitwiseGenome {
         newSC = groupImplementation.clone();
 
         // 2) initialize the clone (owner = msg.sender)
-        IGroup(newSC).initialize(_name);
+        IGroup(newSC).initialize(_name, _pd_members);
 
         // 3) push this group address for every user
         for (uint256 i = 0; i < _users.length; i++) {

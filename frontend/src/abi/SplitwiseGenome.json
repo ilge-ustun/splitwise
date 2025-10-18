@@ -2,30 +2,6 @@
 	{
 		"inputs": [
 			{
-				"internalType": "address[]",
-				"name": "_users",
-				"type": "address[]"
-			},
-			{
-				"internalType": "string",
-				"name": "_name",
-				"type": "string"
-			}
-		],
-		"name": "createGroup",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "newSC",
-				"type": "address"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
 				"internalType": "address",
 				"name": "_groupImplementation",
 				"type": "address"
@@ -79,6 +55,35 @@
 		],
 		"name": "GroupCreated",
 		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address[]",
+				"name": "_users",
+				"type": "address[]"
+			},
+			{
+				"internalType": "string",
+				"name": "_name",
+				"type": "string"
+			},
+			{
+				"internalType": "address",
+				"name": "_pd_members",
+				"type": "address"
+			}
+		],
+		"name": "createGroup",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "newSC",
+				"type": "address"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
 	},
 	{
 		"inputs": [
