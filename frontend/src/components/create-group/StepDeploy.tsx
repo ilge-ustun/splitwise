@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { getAddress, isAddress, decodeEventLog } from "viem";
 import { useAccount, useChainId, useSwitchChain, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
-import SplitwiseBaseAbi from "@/abi/SplitwiseBase.json";
+import SplitwiseGenomeAbi from "@/abi/SplitwiseGenome.json";
 import { smartcontracts } from "@/const/smartcontracts";
 
 type Props = {
@@ -22,6 +22,7 @@ export default function StepDeploy({ onSuccess, onError, initialName = "", initi
   const [newParticipant, setNewParticipant] = useState("");
   const [participants, setParticipants] = useState<string[]>(initialParticipants);
   const [localError, setLocalError] = useState<string | null>(null);
+  const [handledTx, setHandledTx] = useState<`0x${string}` | null>(null);
 
   useEffect(() => {
     if (connectedAddress) {
@@ -50,11 +51,11 @@ export default function StepDeploy({ onSuccess, onError, initialName = "", initi
   }
 
   const { data: txHash, isPending, error, writeContractAsync } = useWriteContract();
-  const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({ chainId: 421614, hash: txHash });
+  const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({ chainId: 11155111, hash: txHash });
 
   useEffect(() => {
     const detectGroup = async () => {
-      if (!isSuccess || !txHash) return;
+      if (!isSuccess || !txHash || handledTx === txHash) return;
       try {
         if (!connector) throw new Error("Wallet connector not available");
         const provider = (await connector.getProvider()) as import("ethers").Eip1193Provider;
@@ -67,10 +68,11 @@ export default function StepDeploy({ onSuccess, onError, initialName = "", initi
         if (receipt?.logs?.length) {
           for (const log of receipt.logs) {
             try {
-              const decoded = decodeEventLog({ abi: SplitwiseBaseAbi, data: log.data, topics: log.topics as unknown as [`0x${string}`, ...`0x${string}`[]] });
+              const decoded = decodeEventLog({ abi: SplitwiseGenomeAbi, data: log.data, topics: log.topics as unknown as [`0x${string}`, ...`0x${string}`[]] });
               if ((decoded as { eventName?: string }).eventName === "GroupCreated") {
                 const args = (decoded as unknown as { args?: Record<string, unknown> }).args;
                 const groupValue = args?.group;
+                console.log("groupValue", groupValue);
                 if (typeof groupValue === "string") newGroup = getAddress(groupValue) as `0x${string}`;
                 break;
               }
@@ -78,6 +80,7 @@ export default function StepDeploy({ onSuccess, onError, initialName = "", initi
           }
         }
         if (!newGroup) throw new Error("Unable to detect new group address from receipt");
+        setHandledTx(txHash as `0x${string}`);
         onSuccess({
           groupAddress: newGroup,
           name,
@@ -89,7 +92,8 @@ export default function StepDeploy({ onSuccess, onError, initialName = "", initi
       }
     };
     void detectGroup();
-  }, [isSuccess, txHash, connector, connectedAddress, participants, name, onSuccess, onError]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSuccess, txHash]);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -103,16 +107,16 @@ export default function StepDeploy({ onSuccess, onError, initialName = "", initi
       setLocalError("Add at least one participant");
       return;
     }
-    if (chainId !== 421614) {
+    if (chainId !== 11155111) {
       try {
-        await switchChain({ chainId: 421614 });
+        await switchChain({ chainId: 11155111 });
       } catch {
-        setLocalError("Please switch to Arbitrum Sepolia (421614)");
+        setLocalError("Please switch to Sepolia (11155111)");
         return;
       }
     }
     try {
-      await writeContractAsync({ chainId: 421614, address: smartcontracts.splitwiseBase as `0x${string}`, abi: SplitwiseBaseAbi, functionName: "createGroup", args: [list, name] });
+      await writeContractAsync({ chainId: 11155111, address: smartcontracts.splitwiseGenome as `0x${string}`, abi: SplitwiseGenomeAbi, functionName: "createGroup", args: [list, name] });
     } catch {
       setLocalError("Transaction failed");
     }
@@ -162,10 +166,10 @@ export default function StepDeploy({ onSuccess, onError, initialName = "", initi
           </div>
         </div>
 
-        {chainId !== 421614 && (
+        {chainId !== 11155111 && (
           <div className="rounded-lg border border-yellow-300/30 bg-yellow-300/10 p-3 text-sm">
-            <p className="mb-2">Current chain: {chainId}. Switch to Arbitrum Sepolia (421614) to create.</p>
-            <button type="button" onClick={() => switchChain({ chainId: 421614 })} className="px-3 py-2 rounded-lg bg-yellow-500 hover:bg-yellow-400 text-black">Switch to Arbitrum Sepolia</button>
+            <p className="mb-2">Current chain: {chainId}. Switch to Sepolia (11155111) to create.</p>
+            <button type="button" onClick={() => switchChain({ chainId: 11155111 })} className="px-3 py-2 rounded-lg bg-yellow-500 hover:bg-yellow-400 text-black">Switch to Sepolia</button>
           </div>
         )}
 

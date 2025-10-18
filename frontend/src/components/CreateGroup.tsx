@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { ProtectedData } from "@iexec/dataprotector";
 import StepDeploy from "./create-group/StepDeploy";
-import StepProtect from "./create-group/StepProtect";
-import StepPush from "./create-group/StepPush";
+// import StepProtect from "./create-group/StepProtect";
+// import StepPush from "./create-group/StepPush";
 
 export default function CreateGroup() {
   const [deployed, setDeployed] = useState<{
@@ -48,7 +48,7 @@ export default function CreateGroup() {
       <StepDeploy onSuccess={onDeploySuccess} onError={onDeployError} />
       {errors.deploy && <p className="text-sm text-red-400">{errors.deploy}</p>}
 
-      <div>
+      {/* <div>
         <StepProtect
           name={deployed?.name || ""}
           participants={(deployed?.participants as unknown as string[]) || []}
@@ -66,7 +66,7 @@ export default function CreateGroup() {
         onError={onPushError}
       />
       {errors.push && <p className="text-sm text-red-400">{errors.push}</p>}
-      {pushDone && <p className="text-sm text-green-400">All steps completed.</p>}
+      {pushDone && <p className="text-sm text-green-400">All steps completed.</p>} */}
     </div>
   );
 }

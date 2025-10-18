@@ -1,4 +1,4 @@
 export const smartcontracts = {
-  groupDataImplementation: "0x6141096CFe7b4112f90F83b9f9Abc8E7Ee3B7A77",
-  splitwiseBase: "0x03fbD238A571D6c80791F4e050Ce1C746997c007",
+  groupImplementation: "0xb1Ef25570B647492c13c4880d0195854cddC5bec",
+  splitwiseGenome: "0x1bE29b33F4e7d1af17324406A551F48ED3eC912e",
 };

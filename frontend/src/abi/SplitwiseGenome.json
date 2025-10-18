@@ -2,8 +2,32 @@
 	{
 		"inputs": [
 			{
+				"internalType": "address[]",
+				"name": "_users",
+				"type": "address[]"
+			},
+			{
+				"internalType": "string",
+				"name": "_name",
+				"type": "string"
+			}
+		],
+		"name": "createGroup",
+		"outputs": [
+			{
 				"internalType": "address",
-				"name": "_dataGroupImplementation",
+				"name": "newSC",
+				"type": "address"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_groupImplementation",
 				"type": "address"
 			}
 		],
@@ -51,72 +75,10 @@
 				"internalType": "string",
 				"name": "name",
 				"type": "string"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "userCount",
-				"type": "uint256"
 			}
 		],
 		"name": "GroupCreated",
 		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "user",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "pd",
-				"type": "address"
-			}
-		],
-		"name": "SecretAddressSet",
-		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address[]",
-				"name": "_users",
-				"type": "address[]"
-			},
-			{
-				"internalType": "string",
-				"name": "_name",
-				"type": "string"
-			}
-		],
-		"name": "createGroup",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "newSC",
-				"type": "address"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "dataGroupImplementation",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
 	},
 	{
 		"inputs": [
@@ -138,6 +100,19 @@
 		"type": "function"
 	},
 	{
+		"inputs": [],
+		"name": "groupImplementation",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
 		"inputs": [
 			{
 				"internalType": "address",
@@ -150,7 +125,7 @@
 				"type": "uint256"
 			}
 		],
-		"name": "groups",
+		"name": "userGroups",
 		"outputs": [
 			{
 				"internalType": "address",
@@ -159,38 +134,6 @@
 			}
 		],
 		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "secretAddress",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_pdAddress",
-				"type": "address"
-			}
-		],
-		"name": "setSecretAddress",
-		"outputs": [],
-		"stateMutability": "nonpayable",
 		"type": "function"
 	}
 ]

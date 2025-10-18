@@ -1,18 +1,18 @@
 "use client";
 
 import { useAccount, useReadContract } from "wagmi";
-import SplitwiseBaseAbi from "@/abi/SplitwiseBase.json";
+import SplitwiseGenomeAbi from "@/abi/SplitwiseGenome.json";
 import { smartcontracts } from "@/const/smartcontracts";
 
 export default function MyGroups() {
   const { isConnected, address } = useAccount();
 
   const { data, isLoading, error } = useReadContract({
-    address: smartcontracts.splitwiseBase as `0x${string}`,
-    abi: SplitwiseBaseAbi,
+    address: smartcontracts.splitwiseGenome as `0x${string}`,
+    abi: SplitwiseGenomeAbi,
     functionName: "getGroups",
     args: [address as `0x${string}`],
-    chainId: 421614,
+    chainId: 11155111, // sepolia
     query: {
       enabled: Boolean(isConnected && address),
       refetchOnWindowFocus: false,

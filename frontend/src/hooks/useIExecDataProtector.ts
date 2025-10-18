@@ -7,6 +7,7 @@ import {
   IExecDataProtectorCore,
   ProtectedData,
   GrantedAccess,
+  DataObject,
 } from "@iexec/dataprotector";
 import { explorerSlugs } from "@/config/wagmiNetworks";
 
@@ -59,7 +60,7 @@ export function useIExecDataProtector() {
   );
 
   const protectJson = useCallback(
-    async (name: string, data: Record<string, unknown>): Promise<ProtectedData> => {
+    async (name: string, data: DataObject): Promise<ProtectedData> => {
       if (!core) throw new Error("iExec DataProtector not initialized");
       return await core.protectData({ name, data });
     },
