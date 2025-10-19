@@ -10,6 +10,7 @@ import GroupName from "@/components/GroupName";
 export default function MyGroups() {
   const { isConnected, address } = useAccount();
   const [openGroup, setOpenGroup] = useState<`0x${string}` | null>(null);
+  const [membersByGroup, setMembersByGroup] = useState<Record<string, string[]>>({});
 
   const { data, isLoading, error } = useReadContract({
     address: smartcontracts.splitwiseGenome as `0x${string}`,
@@ -83,7 +84,13 @@ export default function MyGroups() {
                 </svg>
               </button>
               {openGroup === g && (
-                <Group groupAddress={g} />
+                <Group
+                  groupAddress={g}
+                  initialMembers={membersByGroup[g]}
+                  onMembersFetched={(members) =>
+                    setMembersByGroup(prev => ({ ...prev, [g]: members }))
+                  }
+                />
               )}
             </li>
           ))}

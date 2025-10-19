@@ -6,9 +6,11 @@ import { useIExecDataProtector } from "@/hooks/useIExecDataProtector";
 
 type Props = {
   pdAddress: `0x${string}`;
+  initialMembers?: string[] | undefined;
+  onMembersFetched?: (members: string[]) => void;
 };
 
-export default function MembersFromIExec({ pdAddress }: Props) {
+export default function MembersFromIExec({ pdAddress, initialMembers, onMembersFetched }: Props) {
   const { isConnected, address } = useAccount();
   const chainId = useChainId();
   const { switchChain } = useSwitchChain();
@@ -21,9 +23,18 @@ export default function MembersFromIExec({ pdAddress }: Props) {
 
   const needArbitrum = useMemo(() => chainId !== 421614, [chainId]);
 
+  // Seed from cache if provided
+  useEffect(() => {
+    if (initialMembers && initialMembers.length && !members) {
+      setMembers(initialMembers);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialMembers]);
+
   useEffect(() => {
     const fetchMembers = async () => {
       if (!isConnected || !isReady || !core) return;
+      if (initialMembers && initialMembers.length) return; // already have cached
       setError(null);
       setIsRunning(true);
       try {
@@ -102,6 +113,7 @@ export default function MembersFromIExec({ pdAddress }: Props) {
           }
         }
         setMembers(addresses);
+        if (addresses.length) onMembersFetched?.(addresses);
       } catch (e: unknown) {
         const message = e instanceof Error ? e.message : String(e);
         setError(message);

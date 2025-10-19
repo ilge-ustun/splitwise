@@ -4,7 +4,11 @@ import { useReadContract } from "wagmi";
 import GroupAbi from "@/abi/Group.json";
 import MembersFromIExec from "@/components/MembersFromIExec";
 
-export default function GroupMembers({ groupAddress }: { groupAddress: `0x${string}` }) {
+export default function GroupMembers({ groupAddress, initialMembers, onMembersFetched }: {
+  groupAddress: `0x${string}`;
+  initialMembers?: string[] | undefined;
+  onMembersFetched?: (members: string[]) => void;
+}) {
   const { data, isLoading, error } = useReadContract({
     address: groupAddress,
     abi: GroupAbi,
@@ -36,6 +40,8 @@ export default function GroupMembers({ groupAddress }: { groupAddress: `0x${stri
       {!isLoading && !error && pdMembers && (
         <MembersFromIExec
           pdAddress={pdMembers}
+          initialMembers={initialMembers}
+          onMembersFetched={onMembersFetched}
         />
       )}
     </div>

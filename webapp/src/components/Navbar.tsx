@@ -36,7 +36,7 @@ export default function Navbar() {
 <nav className="bg-[#F4F7FC] rounded-xl p-4 mb-8 flex justify-between items-center">
         <div className="flex items-center gap-6">
           <div className="font-mono text-xl font-bold text-gray-800">
-            crypto splitwise
+            Split3
           </div>
         </div>
         <div className="flex items-center gap-4">
