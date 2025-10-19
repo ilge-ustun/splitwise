@@ -14,7 +14,7 @@ type Props = {
 };
 
 export default function StepProtect({ name, members, onSuccess, onError, initialData = null }: Props) {
-  const { isReady, protectParticipants, getExplorerUrl } = useIExecDataProtector();
+  const { isReady, protectMembers, getExplorerUrl } = useIExecDataProtector();
   const chainId = useChainId();
   const { switchChain } = useSwitchChain();
   const [isRunning, setIsRunning] = useState(false);
@@ -34,7 +34,7 @@ export default function StepProtect({ name, members, onSuccess, onError, initial
         }
       }
       if (!isReady) throw new Error("iExec not initialized");
-      const res = await protectParticipants(`Splitwise Group Members - ${name}`, members);
+      const res = await protectMembers(`Splitwise Group Members - ${name}`, members);
       setResult(res);
       onSuccess(res);
     } catch (e: unknown) {

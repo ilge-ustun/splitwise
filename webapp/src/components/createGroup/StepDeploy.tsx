@@ -10,7 +10,7 @@ type Props = {
   name: string;
   members: string[];
   pdMembersAddress?: `0x${string}`;
-  onSuccess: (params: { groupAddress: `0x${string}`; name: string; participants: `0x${string}`[]; txHash: `0x${string}` }) => void;
+  onSuccess: (params: { groupAddress: `0x${string}`; name: string; members: `0x${string}`[]; txHash: `0x${string}` }) => void;
   onError: (message: string) => void;
 };
 
@@ -62,7 +62,7 @@ export default function StepDeploy({ name, members, pdMembersAddress, onSuccess,
         onSuccess({
           groupAddress: newGroup,
           name,
-          participants: Array.from(new Set(members.map(a => getAddress(a)))) as `0x${string}`[],
+          members: Array.from(new Set(members.map(a => getAddress(a)))) as `0x${string}`[],
           txHash: txHash as `0x${string}`,
         });
       } catch (e: unknown) {
@@ -86,7 +86,7 @@ export default function StepDeploy({ name, members, pdMembersAddress, onSuccess,
       return;
     }
     if (!pdMembersAddress) {
-      setLocalError("Protect participants first to get PD address");
+      setLocalError("Protect members first to get PD address");
       return;
     }
     if (chainId !== 11155111) {

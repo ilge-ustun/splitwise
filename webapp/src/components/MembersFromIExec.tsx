@@ -6,14 +6,13 @@ import { useIExecDataProtector } from "@/hooks/useIExecDataProtector";
 
 type Props = {
   pdAddress: `0x${string}`;
-  authorizedApp: `0x${string}`;
 };
 
-export default function MembersFromIExec({ pdAddress, authorizedApp }: Props) {
+export default function MembersFromIExec({ pdAddress }: Props) {
   const { isConnected, address } = useAccount();
   const chainId = useChainId();
   const { switchChain } = useSwitchChain();
-  const { isReady, core } = useIExecDataProtector();
+  const { isReady, core, authorizedApp } = useIExecDataProtector();
 
   const [isRunning, setIsRunning] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -40,7 +39,7 @@ export default function MembersFromIExec({ pdAddress, authorizedApp }: Props) {
         if (!address) throw new Error("Connect your wallet");
         const access = await core.getGrantedAccess({
           protectedData: pdAddress,
-          authorizedApp,
+          authorizedApp: authorizedApp ?? "",
           authorizedUser: address,
           isUserStrict: true,
           pageSize: 10,
@@ -52,7 +51,7 @@ export default function MembersFromIExec({ pdAddress, authorizedApp }: Props) {
         // Process the protected data using the authorized app as current requester
         const { result } = await core.processProtectedData({
           protectedData: pdAddress,
-          app: authorizedApp,
+          app: authorizedApp ?? "",
           dataMaxPrice: 0,
           appMaxPrice: 0,
           workerpoolMaxPrice: 0,
@@ -60,7 +59,7 @@ export default function MembersFromIExec({ pdAddress, authorizedApp }: Props) {
 
         // `result` is an ArrayBuffer of the app's output; decode it to string
         const text = new TextDecoder().decode(result);
-        // Expecting JSON object like { participants: { "0": "0x..", ... } }
+        // Expecting JSON object like { members: { "0": "0x..", ... } }
         let parsed: unknown;
         try {
           parsed = JSON.parse(text);
@@ -71,10 +70,10 @@ export default function MembersFromIExec({ pdAddress, authorizedApp }: Props) {
         if (
           parsed &&
           typeof parsed === "object" &&
-          "participants" in (parsed as Record<string, unknown>) &&
-          typeof (parsed as Record<string, unknown>).participants === "object"
+          "members" in (parsed as Record<string, unknown>) &&
+          typeof (parsed as Record<string, unknown>).members === "object"
         ) {
-          const obj = (parsed as { participants: Record<string, unknown> }).participants;
+          const obj = (parsed as { members: Record<string, unknown> }).members;
           for (const key of Object.keys(obj)) {
             const v = obj[key];
             if (typeof v === "string") addresses.push(v);
@@ -92,7 +91,7 @@ export default function MembersFromIExec({ pdAddress, authorizedApp }: Props) {
 
     void fetchMembers();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isConnected, isReady, core, pdAddress, authorizedApp]);
+  }, [isConnected, isReady, core, pdAddress]);
 
   return (
     <div className="mt-2 rounded-lg border border-white/15 bg-white/5 p-3">

@@ -72,7 +72,7 @@ export default function CreateGroup() {
           <div className="space-y-1">
             <p className="text-sm font-medium">Members ({members.length})</p>
             {members.length === 0 ? (
-              <p className="text-sm text-white/60">No participants yet.</p>
+              <p className="text-sm text-white/60">No members yet.</p>
             ) : (
               <ul className="space-y-2">
                 {members.map(p => {

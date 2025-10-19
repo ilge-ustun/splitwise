@@ -49,6 +49,15 @@ export function useIExecDataProtector() {
 
   const isReady = useMemo(() => Boolean(core), [core]);
 
+  const authorizedApp = useMemo(() => {
+    const byChain: Record<number, string | undefined> = {
+      421614: process.env.NEXT_PUBLIC_IEXEC_APP_ARBITRUM_SEPOLIA,
+      42161: process.env.NEXT_PUBLIC_IEXEC_APP_ARBITRUM_ONE,
+      100: process.env.NEXT_PUBLIC_IEXEC_APP_GNOSIS,
+    };
+    return byChain[chainId];
+  }, [chainId]);
+
   const getExplorerUrl = useCallback(
     (address?: string, type: "address" | "dataset" | "apps" = "address") => {
       const slug = explorerSlugs[chainId];
@@ -67,14 +76,13 @@ export function useIExecDataProtector() {
     [core],
   );
 
-  const protectParticipants = useCallback(
-    async (name: string, participants: string[]): Promise<ProtectedData> => {
-      // Shape array into an object to satisfy typings of DataObject
-      const participantsObject = participants.reduce<Record<string, string>>((acc, addr, idx) => {
+  const protectMembers = useCallback(
+    async (name: string, members: string[]): Promise<ProtectedData> => {
+      const membersObject = members.reduce<Record<string, string>>((acc, addr, idx) => {
         acc[String(idx)] = addr;
         return acc;
       }, {});
-      return await protectJson(name, { participants: participantsObject });
+      return await protectJson(name, { members: membersObject });
     },
     [protectJson],
   );
@@ -101,8 +109,9 @@ export function useIExecDataProtector() {
     initError,
     getExplorerUrl,
     protectJson,
-    protectParticipants,
+    protectMembers,
     grantAccess,
+    authorizedApp,
   } as const;
 }
 
