@@ -3,7 +3,6 @@
 import CreateGroup from "@/components/CreateGroup";
 import MyGroups from "@/components/MyGroups";
 import Navbar from "@/components/Navbar";
-import AddExpense from "@/components/AddExpense";
 
 export default function Home() {
   return (
@@ -12,7 +11,6 @@ export default function Home() {
       <div className="w-full flex flex-col gap-6">
         <CreateGroup />
         <MyGroups />
-        <AddExpense />
       </div>
     </div>
   );
