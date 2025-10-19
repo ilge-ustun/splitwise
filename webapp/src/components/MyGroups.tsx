@@ -72,7 +72,7 @@ export default function MyGroups() {
               >
                 <span className="flex flex-col items-start gap-0.5 text-left">
                   <GroupName address={g} />
-                  <span className="font-mono text-xs break-all text-white/70">{g}</span>
+                  <span className="font-mono text-xs break-all">{g}</span>
                 </span>
                 <svg
                   className={`h-4 w-4 text-black transition-transform ${openGroup === g ? "rotate-90" : "rotate-0"}`}
