@@ -23,7 +23,6 @@ export default function MembersFromIExec({ pdAddress, initialMembers, onMembersF
 
   const needArbitrum = useMemo(() => chainId !== 421614, [chainId]);
 
-  // Seed from cache if provided
   useEffect(() => {
     if (initialMembers && initialMembers.length && !members) {
       setMembers(initialMembers);

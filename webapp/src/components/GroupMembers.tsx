@@ -3,12 +3,14 @@
 import { useReadContract } from "wagmi";
 import GroupAbi from "@/abi/Group.json";
 import MembersFromIExec from "@/components/MembersFromIExec";
+import { useIExecDataProtector } from "@/hooks/useIExecDataProtector";
 
 export default function GroupMembers({ groupAddress, initialMembers, onMembersFetched }: {
   groupAddress: `0x${string}`;
   initialMembers?: string[] | undefined;
   onMembersFetched?: (members: string[]) => void;
 }) {
+  const { getExplorerUrl } = useIExecDataProtector();
   const { data, isLoading, error } = useReadContract({
     address: groupAddress,
     abi: GroupAbi,
@@ -29,11 +31,26 @@ export default function GroupMembers({ groupAddress, initialMembers, onMembersFe
           <span className="font-medium">Group address:</span> <span className="font-mono break-all">{groupAddress}</span>
         </div>
         <div>
-          <span className="font-medium">Protected members (getPdMembers):</span>{" "}
+          <span className="font-medium">Protected members data address:</span>{" "}
           {isLoading && <span>loading…</span>}
           {error && <span className="text-red-400">failed to load</span>}
           {!isLoading && !error && (
-            <span className="font-mono break-all">{pdMembers ?? "—"}</span>
+            pdMembers ? (
+              getExplorerUrl(pdMembers, "dataset") ? (
+                <a
+                  href={getExplorerUrl(pdMembers, "dataset")!}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-mono break-all underline"
+                >
+                  {pdMembers}
+                </a>
+              ) : (
+                <span className="font-mono break-all">{pdMembers}</span>
+              )
+            ) : (
+              <span className="font-mono break-all">—</span>
+            )
           )}
         </div>
       </div>

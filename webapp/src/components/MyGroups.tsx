@@ -72,7 +72,14 @@ export default function MyGroups() {
               >
                 <span className="flex flex-col items-start gap-0.5 text-left">
                   <GroupName address={g} />
-                  <span className="font-mono text-xs break-all">{g}</span>
+                  <a
+                    href={`https://sepolia.etherscan.io/address/${g}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-mono text-xs break-all underline"
+                  >
+                    {g}
+                  </a>
                 </span>
                 <svg
                   className={`h-4 w-4 text-black transition-transform ${openGroup === g ? "rotate-90" : "rotate-0"}`}
