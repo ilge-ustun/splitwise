@@ -17,6 +17,25 @@ const main = async () => {
       console.log('Protected members object found');
     } catch (e) {
       console.log('Could not read members from protected data:', e);
+      // Fallback: read indexed keys members.0, members.1, ...
+      try {
+        const deserializer = new IExecDataProtectorDeserializer();
+        const collected = {};
+        for (let i = 0; i < 100; i++) {
+          try {
+            const v = await deserializer.getValue(`members.${i}`, 'string');
+            collected[String(i)] = v;
+          } catch (_) {
+            break;
+          }
+        }
+        if (Object.keys(collected).length > 0) {
+          members = collected;
+          console.log('Collected members from indexed keys');
+        }
+      } catch (e2) {
+        console.log('Indexed fallback failed:', e2);
+      }
     }
 
     const { IEXEC_APP_DEVELOPER_SECRET } = process.env;

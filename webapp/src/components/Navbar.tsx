@@ -3,7 +3,7 @@ import { useAppKit } from "@reown/appkit/react";
 import { useAccount, useChainId, useDisconnect, useSwitchChain } from "wagmi";
 
 export default function Navbar() {
-  const { isConnected } = useAccount();
+  const { isConnected, address } = useAccount();
   const chainId = useChainId();
   const { switchChain } = useSwitchChain();
   const networks = Object.values(wagmiNetworks);
@@ -60,6 +60,11 @@ export default function Navbar() {
                   </option>
                 ))}
               </select>
+              {address && (
+                <span className="font-mono text-xs text-gray-700 bg-gray-100 px-2 py-1 rounded">
+                  {address}
+                </span>
+              )}
             </div>
           )}
           {!isConnected ? (

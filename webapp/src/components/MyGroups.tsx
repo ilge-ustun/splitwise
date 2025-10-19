@@ -5,6 +5,7 @@ import { useAccount, useReadContract } from "wagmi";
 import SplitwiseGenomeAbi from "@/abi/SplitwiseGenome.json";
 import { smartcontracts } from "@/const/smartcontracts";
 import Group from "@/components/Group";
+import GroupName from "@/components/GroupName";
 
 export default function MyGroups() {
   const { isConnected, address } = useAccount();
@@ -68,7 +69,10 @@ export default function MyGroups() {
                 className="w-full flex items-center justify-between px-4 py-3 hover:bg-white/10 transition-colors"
                 aria-expanded={openGroup === g}
               >
-                <span className="font-mono text-sm break-all text-left">{g}</span>
+                <span className="flex flex-col items-start gap-0.5 text-left">
+                  <GroupName address={g} />
+                  <span className="font-mono text-xs break-all text-white/70">{g}</span>
+                </span>
                 <svg
                   className={`h-4 w-4 text-black transition-transform ${openGroup === g ? "rotate-90" : "rotate-0"}`}
                   viewBox="0 0 20 20"

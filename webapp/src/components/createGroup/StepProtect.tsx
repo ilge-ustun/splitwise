@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { ProtectedData } from "@iexec/dataprotector";
 import { useIExecDataProtector } from "@/hooks/useIExecDataProtector";
-import { useChainId, useSwitchChain } from "wagmi";
+import { getAddress, isAddress } from "viem";
+import { useAccount, useChainId, useSwitchChain } from "wagmi";
 
 type Props = {
   name: string;
@@ -14,7 +15,8 @@ type Props = {
 };
 
 export default function StepProtect({ name, members, onSuccess, onError, initialData = null }: Props) {
-  const { isReady, protectMembers, getExplorerUrl } = useIExecDataProtector();
+  const { isReady, protectMembers, getExplorerUrl, grantAccess, authorizedApp } = useIExecDataProtector();
+  const { address } = useAccount();
   const chainId = useChainId();
   const { switchChain } = useSwitchChain();
   const [isRunning, setIsRunning] = useState(false);
@@ -36,6 +38,33 @@ export default function StepProtect({ name, members, onSuccess, onError, initial
       if (!isReady) throw new Error("iExec not initialized");
       const res = await protectMembers(`Splitwise Group Members - ${name}`, members);
       setResult(res);
+      // Grant access to all members for this iApp
+      if (!authorizedApp) {
+        throw new Error("iApp not configured. Set NEXT_PUBLIC_IEXEC_APP_ARBITRUM_SEPOLIA");
+      }
+      const candidates = [...members, address ?? ""];
+      const uniqueMembers = Array.from(new Set(candidates
+        .filter((m) => typeof m === "string" && isAddress(m))
+        .map((m) => getAddress(m))));
+      const failures: { user: string; message: string }[] = [];
+      for (const user of uniqueMembers) {
+        try {
+          await grantAccess({
+            protectedDataAddress: res.address,
+            authorizedApp,
+            authorizedUser: user,
+            pricePerAccess: 0,
+            numberOfAccess: 1000000,
+          });
+        } catch (e: unknown) {
+          const message = e instanceof Error ? e.message : String(e);
+          failures.push({ user, message });
+        }
+      }
+      if (failures.length > 0) {
+        const details = failures.map(f => `${f.user}: ${f.message}`).join("; ");
+        throw new Error(`Failed to publish data access for: ${details}`);
+      }
       onSuccess(res);
     } catch (e: unknown) {
       const message = e instanceof Error ? e.message : String(e);
