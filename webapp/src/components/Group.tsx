@@ -1,4 +1,4 @@
-import GroupMembers from "./GroupMembers";
+import GroupMembers from "@/components/GroupMembers";
 
 export default function Group({ groupAddress }: { groupAddress: `0x${string}` }) {
   return (
