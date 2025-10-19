@@ -26,7 +26,7 @@ export default function MyGroups() {
 
   const groups = (data as `0x${string}`[] | undefined) ?? [];
 
-  // accordion view shows full address; shorten not needed
+  // const mockMembers = ['0xF061ed1a3EcA9c57cdf7514Cb87B0cF0f8A82833', '0x0A6f0e4Dba6E4E450EA467CE4B25572ADa8872B8']
 
   if (!isConnected) {
     return (

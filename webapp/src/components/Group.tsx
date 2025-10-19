@@ -1,4 +1,5 @@
 import GroupMembers from "@/components/GroupMembers";
+import AddExpense from "@/components/AddExpense";
 
 export default function Group({ groupAddress, initialMembers, onMembersFetched }: {
   groupAddress: `0x${string}`;
@@ -8,6 +9,7 @@ export default function Group({ groupAddress, initialMembers, onMembersFetched }
   return (
     <>
       <GroupMembers groupAddress={groupAddress} initialMembers={initialMembers} onMembersFetched={onMembersFetched} />
+      <AddExpense groupAddress={groupAddress} members={(initialMembers ?? []) as `0x${string}`[]} />
     </>
   );
 }
